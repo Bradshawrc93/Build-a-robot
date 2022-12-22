@@ -1,5 +1,6 @@
 *** Settings ***
-Documentation       Orders robots from RobotSpareBin Industries Inc.
+Documentation       Ask the user to input the url for the order.csv file
+...                 Runs the orders from the order.csv through the build-a-robot website.
 ...                 Saves the order HTML receipt as a PDF file.
 ...                 Saves the screenshot of the ordered robot.
 ...                 Embeds the screenshot of the robot to the PDF receipt.
@@ -37,7 +38,6 @@ Open the robot order website
 Download Orders
     [Arguments]    ${result.url_input}
     Download    ${result.url_input}    overwrite=true
-    #Download    https://robotsparebinindustries.com/orders.csv    overwrite=true
 
 Get Orders
     ${orders}=    Read table from CSV    orders.csv    header=true
@@ -52,7 +52,7 @@ Submit Orders
         Wait Until Keyword Succeeds    30    .5    Submit the Order
         Grab receipt info    ${row}
         Screenshot Robot    ${row}
-        Create PDF    ${row}
+        Embed PDF    ${row}
         Click Button When Visible    order-another
         Close the annoying modal
     END
@@ -85,7 +85,7 @@ Screenshot Robot
     [Arguments]    ${row}
     Screenshot    robot-preview-image    ${OUTPUT_DIR}${/}robot-preview-image${/}${row}[Order number].png
 
-Create PDF
+Embed PDF
     [Arguments]    ${row}
     Open Pdf    ${OUTPUT_DIR}${/}receipts${/}${row}[Order number].pdf
     Add Watermark Image To Pdf
